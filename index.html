@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Prompt Generator - สร้าง Prompt อัจฉริยะ</title>
+    
+    <!-- Google Fonts: Sarabun -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        thai: ['Sarabun', 'sans-serif'],
+                        display: ['"Arial Black"', 'Impact', 'sans-serif'], // For the main title
+                    },
+                    colors: {
+                        brand: {
+                            bg: '#0B0F19', // Very dark navy
+                            card: '#161B2B', // Dark card background
+                            input: '#1E2436', // Darker input background
+                            border: '#2E364F', // Subtle borders
+                            accent: '#6366F1', // Indigo
+                            accentHover: '#4F46E5',
+                            textMain: '#F8FAFC', // Slate 50
+                            textMuted: '#94A3B8', // Slate 400
+                        }
+                    },
+                    backgroundImage: {
+                        'gradient-btn': 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)',
+                        'gradient-btn-hover': 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS for micro-interactions and scrollbars -->
+    <style>
+        body {
+            background-color: #0B0F19; /* fallback */
+            /* Dark Grid Background */
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-position: center center;
+            color: #F8FAFC;
+        }
+
+        /* Custom Scrollbar for Dark Theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B0F19; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2E364F; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569; 
+        }
+
+        /* Input styling overrides */
+        .cyber-input {
+            transition: all 0.2s ease;
+        }
+        .cyber-input:focus {
+            border-color: #6366F1;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+            outline: none;
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.4s ease forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Loading Skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, #1E2436 25%, #2E364F 50%, #1E2436 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
+</head>
+<body class="font-thai antialiased min-h-screen flex flex-col items-center py-10 px-4 sm:px-6">
+
+    <!-- Header Section -->
+    <header class="text-center w-full max-w-3xl mb-8 fade-in">
+        <div class="flex items-center justify-center gap-3 mb-4">
+            <div class="w-12 h-12 rounded-xl bg-gradient-btn flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+                <i class="fa-solid fa-rocket text-xl"></i>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-display font-black tracking-wider text-white">
+                My Prompt Generator
+            </h1>
+        </div>
+        
+        <p class="text-brand-textMuted text-sm md:text-base mb-6 leading-relaxed max-w-md mx-auto">
+            กรอกข้อมูลด้านล่าง แล้วกดปุ่มเพื่อสร้าง Prompt<br>
+            สำหรับพัฒนา Web App ที่พร้อมใช้งานทันที
+        </p>
+
+        <!-- Badges -->
+        <div class="flex flex-wrap justify-center gap-2 text-xs font-medium">
+            <span class="px-3 py-1.5 rounded-full bg-brand-input border border-brand-border text-brand-textMuted flex items-center gap-1.5">
+                <i class="fa-solid fa-palette text-indigo-400"></i> UI/UX
+            </span>
+            <span class="px-3 py-1.5 rounded-full bg-brand-input border border-brand-border text-brand-textMuted flex items-center gap-1.5">
+                <i class="fa-solid fa-code text-blue-400"></i> HTML / CSS / JS
+            </span>
+            <span class="px-3 py-1.5 rounded-full bg-brand-input border border-brand-border text-brand-textMuted flex items-center gap-1.5">
+                <i class="fa-solid fa-mobile-screen text-purple-400"></i> Responsive
+            </span>
+            <span class="px-3 py-1.5 rounded-full bg-brand-input border border-brand-border text-brand-textMuted flex items-center gap-1.5">
+                <i class="fa-solid fa-language text-pink-400"></i> ภาษาไทย
+            </span>
+        </div>
+    </header>
+
+    <!-- Main Form Area -->
+    <main class="w-full max-w-3xl flex flex-col gap-6">
+        
+        <form id="promptForm" class="flex flex-col gap-6">
+            
+            <!-- Section 1: System Info -->
+            <section class="bg-brand-card rounded-2xl p-6 md:p-8 border border-brand-border shadow-xl fade-in" style="animation-delay: 0.1s;">
+                <h2 class="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-brand-input flex items-center justify-center text-indigo-400">
+                        <i class="fa-solid fa-circle-info"></i>
+                    </div>
+                    ข้อมูลระบบ
+                </h2>
+
+                <div class="space-y-5">
+                    <!-- System Name -->
+                    <div>
+                        <label for="systemName" class="block text-sm font-medium text-brand-textMuted mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-tag text-indigo-400 w-4"></i> ชื่อระบบ
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-server text-brand-textMuted text-sm"></i>
+                            </div>
+                            <input type="text" id="systemName" required placeholder="เช่น ระบบจัดการสินค้า, แดชบอร์ดรายงาน" 
+                                class="cyber-input w-full pl-10 pr-4 py-3 rounded-xl bg-brand-input border border-brand-border text-white placeholder-slate-500">
+                        </div>
+                    </div>
+
+                    <!-- Design Theme -->
+                    <div>
+                        <label for="designTheme" class="block text-sm font-medium text-brand-textMuted mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-wand-magic-sparkles text-indigo-400 w-4"></i> ธีมการออกแบบ
+                        </label>
+                        <div class="relative mb-3">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-swatchbook text-brand-textMuted text-sm"></i>
+                            </div>
+                            <input type="text" id="designTheme" placeholder="เช่น Modern Minimal, Dark Professional, Playful" 
+                                class="cyber-input w-full pl-10 pr-4 py-3 rounded-xl bg-brand-input border border-brand-border text-white placeholder-slate-500">
+                        </div>
+                        
+                        <!-- Theme Suggestion Chips -->
+                        <div class="flex flex-wrap gap-2 text-xs">
+                            <button type="button" class="theme-chip px-3 py-1.5 rounded-full bg-brand-input border border-brand-border text-brand-textMuted hover:text-white hover:border-indigo-400 transition-colors flex items-center gap-1.5" data-theme="Modern Minimal">
+                                <i class="fa-solid fa-leaf text-emerald-400"></i> Modern Minimal
+                            </button>
+                            <button type="button" class="theme-chip px-3 py-1.5 rounded-full bg-brand-input border border-brand-border text-brand-textMuted hover:text-white hover:border-indigo-400 transition-colors flex items-center gap-1.5" data-theme="Dark Professional">
+                                <i class="fa-solid fa-moon text-blue-400"></i> Dark Professional
+                            </button>
+                            <button type="button" class="theme-chip px-3 py-1.5 rounded-full bg-brand-input border border-brand-border text-brand-textMuted hover:text-white hover:border-indigo-400 transition-colors flex items-center gap-1.5" data-theme="Glassmorphism">
+                                <i class="fa-solid fa-cubes text-purple-400"></i> Glassmorphism
+                            </button>
+                            <button type="button" class="theme-chip px-3 py-1.5 rounded-full bg-brand-input border border-brand-border text-brand-textMuted hover:text-white hover:border-indigo-400 transition-colors flex items-center gap-1.5" data-theme="Playful & Fun">
+                                <i class="fa-solid fa-face-smile text-yellow-400"></i> Playful
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Color Palette -->
+                    <div>
+                        <label for="colorPalette" class="block text-sm font-medium text-brand-textMuted mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-droplet text-indigo-400 w-4"></i> โทนสี
+                        </label>
+                        <div class="relative mb-3">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-palette text-brand-textMuted text-sm"></i>
+                            </div>
+                            <input type="text" id="colorPalette" placeholder="เช่น Ocean Blue, Forest Green, Warm Sunset" 
+                                class="cyber-input w-full pl-10 pr-4 py-3 rounded-xl bg-brand-input border border-brand-border text-white placeholder-slate-500">
+                        </div>
+                        
+                        <!-- Suggestion Chips -->
+                        <div class="flex flex-wrap gap-2 text-xs">
+                            <button type="button" class="color-chip px-3 py-1.5 rounded-full bg-brand-input border border-brand-border text-brand-textMuted hover:text-white hover:border-blue-500 transition-colors flex items-center gap-1.5" data-color="Ocean Blue">
+                                <span class="w-2 h-2 rounded-full bg-blue-500"></span> Ocean Blue
+                            </button>
+                            <button type="button" class="color-chip px-3 py-1.5 rounded-full bg-brand-input border border-brand-border text-brand-textMuted hover:text-white hover:border-emerald-500 transition-colors flex items-center gap-1.5" data-color="Forest Green">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Forest Green
+                            </button>
+                            <button type="button" class="color-chip px-3 py-1.5 rounded-full bg-brand-input border border-brand-border text-brand-textMuted hover:text-white hover:border-orange-500 transition-colors flex items-center gap-1.5" data-color="Warm Sunset">
+                                <span class="w-2 h-2 rounded-full bg-orange-500"></span> Warm Sunset
+                            </button>
+                            <button type="button" class="color-chip px-3 py-1.5 rounded-full bg-brand-input border border-brand-border text-brand-textMuted hover:text-white hover:border-purple-500 transition-colors flex items-center gap-1.5" data-color="Midnight Purple">
+                                <span class="w-2 h-2 rounded-full bg-purple-500"></span> Midnight Purple
+                            </button>
+                            <button type="button" class="color-chip px-3 py-1.5 rounded-full bg-brand-input border border-brand-border text-brand-textMuted hover:text-white hover:border-pink-500 transition-colors flex items-center gap-1.5" data-color="Cherry Blossom">
+                                <span class="w-2 h-2 rounded-full bg-pink-500"></span> Cherry Blossom
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 2: Requirements -->
+            <section class="bg-brand-card rounded-2xl p-6 md:p-8 border border-brand-border shadow-xl fade-in" style="animation-delay: 0.2s;">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-brand-input flex items-center justify-center text-indigo-400">
+                            <i class="fa-solid fa-list-check"></i>
+                        </div>
+                        ความต้องการของระบบ
+                    </h2>
+                    <span id="charCount" class="text-xs text-brand-textMuted bg-brand-input px-2 py-1 rounded border border-brand-border">
+                        <i class="fa-solid fa-align-left mr-1"></i> 0 ตัวอักษร
+                    </span>
+                </div>
+
+                <div class="relative">
+                    <div class="absolute top-3 left-4 pointer-events-none">
+                        <i class="fa-solid fa-pen-to-square text-brand-textMuted text-sm"></i>
+                    </div>
+                    <textarea id="requirements" required rows="6" placeholder="อธิบายความต้องการของระบบ เช่น&#10;- มีหน้าล็อกอินและจัดการผู้ใช้&#10;- แสดงตารางข้อมูลสินค้าพร้อม Export Excel&#10;- มีกราฟรายงานยอดขายแยกตามเดือน&#10;- รองรับการค้นหาและกรองข้อมูล" 
+                        class="cyber-input w-full pl-10 pr-4 py-3 rounded-xl bg-brand-input border border-brand-border text-white placeholder-slate-500 resize-y leading-relaxed"></textarea>
+                </div>
+            </section>
+
+            <!-- Generate Button -->
+            <button type="submit" id="btnGenerate" class="w-full py-4 rounded-xl bg-gradient-btn hover:bg-gradient-btn-hover text-white font-bold text-lg shadow-lg shadow-indigo-500/25 transition-all transform hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-indigo-500/50 flex justify-center items-center gap-2 fade-in" style="animation-delay: 0.3s;">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> สร้าง Prompt สู่ Web App
+            </button>
+        </form>
+
+        <!-- Result Section (Hidden initially) -->
+        <section id="resultSection" class="hidden bg-brand-card rounded-2xl border border-brand-border shadow-xl overflow-hidden fade-in mt-4">
+            <div class="flex justify-between items-center px-4 py-3 bg-brand-input border-b border-brand-border">
+                <div class="flex items-center gap-2 text-sm font-medium text-white">
+                    <i class="fa-solid fa-terminal text-emerald-400"></i> Prompt ของคุณพร้อมใช้งานแล้ว
+                </div>
+                <button id="btnCopy" class="text-xs bg-indigo-500/20 hover:bg-indigo-500/40 text-indigo-300 px-3 py-1.5 rounded transition-colors flex items-center gap-1.5">
+                    <i class="fa-regular fa-copy"></i> คัดลอก
+                </button>
+            </div>
+            
+            <div id="loadingState" class="hidden p-6 flex flex-col gap-3">
+                <div class="h-4 w-3/4 skeleton rounded"></div>
+                <div class="h-4 w-full skeleton rounded"></div>
+                <div class="h-4 w-5/6 skeleton rounded"></div>
+                <div class="h-4 w-1/2 skeleton rounded mt-4"></div>
+            </div>
+
+            <textarea id="resultText" readonly class="w-full h-80 bg-[#0d1117] text-slate-300 p-6 font-mono text-sm resize-y outline-none leading-relaxed hidden" aria-label="Generated Prompt"></textarea>
+        </section>
+
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="mt-12 text-center text-xs text-brand-textMuted flex items-center justify-center gap-4 fade-in" style="animation-delay: 0.4s;">
+        <span class="flex items-center gap-1"><i class="fa-solid fa-rocket text-indigo-500/50"></i> Prompt Generator</span>
+        <span class="text-brand-border">|</span>
+        <span class="flex items-center gap-1"><i class="fa-brands fa-google text-slate-500"></i> Google Apps Script</span>
+        <span class="text-brand-border">|</span>
+        <span class="flex items-center gap-1"><i class="fa-solid fa-flag text-slate-500"></i> รองรับภาษาไทยอย่างสมบูรณ์</span>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM Elements
+            const form = document.getElementById('promptForm');
+            const inputs = {
+                systemName: document.getElementById('systemName'),
+                designTheme: document.getElementById('designTheme'),
+                colorPalette: document.getElementById('colorPalette'),
+                requirements: document.getElementById('requirements')
+            };
+            const charCountDisplay = document.getElementById('charCount');
+            const colorChips = document.querySelectorAll('.color-chip');
+            const themeChips = document.querySelectorAll('.theme-chip');
+            
+            const btnGenerate = document.getElementById('btnGenerate');
+            const resultSection = document.getElementById('resultSection');
+            const loadingState = document.getElementById('loadingState');
+            const resultText = document.getElementById('resultText');
+            const btnCopy = document.getElementById('btnCopy');
+
+            // --- 1. Character Counter ---
+            inputs.requirements.addEventListener('input', function() {
+                const count = this.value.length;
+                charCountDisplay.innerHTML = `<i class="fa-solid fa-align-left mr-1"></i> ${count} ตัวอักษร`;
+            });
+
+            // --- 2. Suggestion Chips Logic ---
+            colorChips.forEach(chip => {
+                chip.addEventListener('click', function() {
+                    const color = this.getAttribute('data-color');
+                    inputs.colorPalette.value = color;
+                    inputs.colorPalette.focus();
+                    saveData(); // Save state when chip clicked
+                });
+            });
+
+            themeChips.forEach(chip => {
+                chip.addEventListener('click', function() {
+                    const theme = this.getAttribute('data-theme');
+                    inputs.designTheme.value = theme;
+                    inputs.designTheme.focus();
+                    saveData(); // Save state when chip clicked
+                });
+            });
+
+            // --- 3. Local Storage Management (Auto-save) ---
+            const loadData = () => {
+                const savedData = localStorage.getItem('promptGeneratorDarkData');
+                if (savedData) {
+                    const data = JSON.parse(savedData);
+                    Object.keys(inputs).forEach(key => {
+                        if (data[key]) inputs[key].value = data[key];
+                    });
+                    // Trigger char count update
+                    if(inputs.requirements.value) {
+                        inputs.requirements.dispatchEvent(new Event('input'));
+                    }
+                }
+            };
+
+            const saveData = () => {
+                const data = {};
+                Object.keys(inputs).forEach(key => {
+                    data[key] = inputs[key].value;
+                });
+                localStorage.setItem('promptGeneratorDarkData', JSON.stringify(data));
+            };
+
+            // Listeners for auto-save
+            Object.values(inputs).forEach(input => {
+                input.addEventListener('input', saveData);
+            });
+
+            loadData();
+
+            // --- 4. Generate Prompt Logic ---
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                // Change button state
+                const originalBtnContent = btnGenerate.innerHTML;
+                btnGenerate.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> กำลังสร้าง Prompt...';
+                btnGenerate.disabled = true;
+                btnGenerate.classList.add('opacity-80', 'cursor-not-allowed');
+
+                // Show UI
+                resultSection.classList.remove('hidden');
+                resultText.classList.add('hidden');
+                loadingState.classList.remove('hidden');
+
+                // Scroll to result smoothly
+                setTimeout(() => {
+                    resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+
+                // Simulate processing time
+                setTimeout(() => {
+                    // Construct the final Prompt based on the template
+                    const today = new Date().toLocaleDateString('th-TH', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                    const time = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+                    
+                    const sysName = inputs.systemName.value || 'ไม่ระบุ';
+                    const theme = inputs.designTheme.value || 'Modern Minimal';
+                    const colors = inputs.colorPalette.value || 'ไม่ระบุ (ใช้สีพื้นฐาน)';
+                    const reqs = inputs.requirements.value || '- ไม่มีข้อมูลเพิ่มเติม -';
+
+                    const finalPrompt = `🚀 PROMPT: สร้าง Web Application
+════════════════════════════════════════════════════════
+สร้างวันที่: ${today} ${time}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📌 ข้อมูลระบบ (System Info)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• ชื่อระบบ   : ${sysName}
+• ธีมการออกแบบ: ${theme}
+• โทนสี      : ${colors}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 ความต้องการของระบบ (Requirements)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${reqs}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎨 ข้อกำหนดการออกแบบ UI/UX (Design Specification)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+กำหนดให้ใช้:
+• Framework CSS : Tailwind CSS (CDN) หรือ Bootstrap 5
+• Icons         : Font Awesome 6 หรือ Heroicons
+• Typography    : Google Fonts (เลือกให้เหมาะกับธีม)
+• Responsive    : รองรับ Mobile / Tablet / Desktop
+• Animation     : Smooth transition และ micro-interaction
+• Language      : รองรับภาษาไทยอย่างสมบูรณ์ (UTF-8)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚙️ ข้อกำหนดทางเทคนิค (Technical Requirements)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. โครงสร้างไฟล์:
+   - จัดการโค้ด HTML, CSS, JS ให้อยู่ในไฟล์เดียว (Single File) หรือแยกโครงสร้างตามความเหมาะสม
+
+2. HTML/CSS:
+   - Semantic HTML5 (<header>, <main>, <section>, <footer>)
+   - Flexbox / CSS Grid สำหรับ Layout
+
+3. JavaScript:
+   - Vanilla JS (เบา ไม่ต้องใช้ Framework)
+   - Form Validation ฝั่ง Client (ถ้ามีฟอร์ม)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ Checklist ก่อนส่งงาน
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+□ โค้ดสามารถนำไปรันผ่านเบราว์เซอร์ได้ทันทีไม่มี Error
+□ Responsive ทุก Breakpoint
+□ ภาษาไทยแสดงผลถูกต้อง
+□ UI สวยงามตามธีมและโทนสีที่ระบุ
+
+════════════════════════════════════════════════════════
+💡 หมายเหตุ: สร้างโดย Prompt Generator`;
+
+                    // Update UI
+                    loadingState.classList.add('hidden');
+                    resultText.value = finalPrompt;
+                    resultText.classList.remove('hidden');
+                    
+                    // Reset button
+                    btnGenerate.innerHTML = originalBtnContent;
+                    btnGenerate.disabled = false;
+                    btnGenerate.classList.remove('opacity-80', 'cursor-not-allowed');
+                }, 1000);
+            });
+
+            // --- 5. Copy Logic ---
+            btnCopy.addEventListener('click', async () => {
+                const textToCopy = resultText.value;
+                if (!textToCopy) return;
+
+                const originalHtml = btnCopy.innerHTML;
+                
+                try {
+                    await navigator.clipboard.writeText(textToCopy);
+                    showCopySuccess();
+                } catch (err) {
+                    resultText.select();
+                    document.execCommand('copy');
+                    window.getSelection().removeAllRanges();
+                    showCopySuccess();
+                }
+
+                function showCopySuccess() {
+                    btnCopy.innerHTML = '<i class="fa-solid fa-check"></i> คัดลอกแล้ว';
+                    btnCopy.classList.replace('text-indigo-300', 'text-emerald-400');
+                    btnCopy.classList.replace('bg-indigo-500/20', 'bg-emerald-500/20');
+
+                    setTimeout(() => {
+                        btnCopy.innerHTML = originalHtml;
+                        btnCopy.classList.replace('text-emerald-400', 'text-indigo-300');
+                        btnCopy.classList.replace('bg-emerald-500/20', 'bg-indigo-500/20');
+                    }, 2000);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
