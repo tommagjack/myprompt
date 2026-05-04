@@ -257,10 +257,15 @@
                 </div>
             </section>
 
-            <!-- Generate Button -->
-            <button type="submit" id="btnGenerate" class="w-full py-4 rounded-xl bg-gradient-btn hover:bg-gradient-btn-hover text-white font-bold text-lg shadow-lg shadow-indigo-500/25 transition-all transform hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-indigo-500/50 flex justify-center items-center gap-2 fade-in" style="animation-delay: 0.3s;">
-                <i class="fa-solid fa-wand-magic-sparkles"></i> สร้าง Prompt สู่ Web App
-            </button>
+            <!-- Generate & Clear Buttons -->
+            <div class="flex gap-4 fade-in" style="animation-delay: 0.3s;">
+                <button type="submit" id="btnGenerate" class="flex-1 py-4 rounded-xl bg-gradient-btn hover:bg-gradient-btn-hover text-white font-bold text-lg shadow-lg shadow-indigo-500/25 transition-all transform hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-indigo-500/50 flex justify-center items-center gap-2">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> สร้าง Prompt สู่ Web App
+                </button>
+                <button type="button" id="btnClear" class="px-6 py-4 rounded-xl bg-brand-input hover:bg-red-500/20 border border-brand-border hover:border-red-500/50 text-brand-textMuted hover:text-red-400 transition-all flex justify-center items-center gap-2 focus:outline-none focus:ring-4 focus:ring-red-500/20" title="ล้างข้อมูลทั้งหมด">
+                    <i class="fa-solid fa-trash-can text-lg"></i>
+                </button>
+            </div>
         </form>
 
         <!-- Result Section (Hidden initially) -->
@@ -311,6 +316,7 @@
             const themeChips = document.querySelectorAll('.theme-chip');
             
             const btnGenerate = document.getElementById('btnGenerate');
+            const btnClear = document.getElementById('btnClear');
             const resultSection = document.getElementById('resultSection');
             const loadingState = document.getElementById('loadingState');
             const resultText = document.getElementById('resultText');
@@ -370,6 +376,28 @@
             });
 
             loadData();
+
+            // --- 3.5 Clear Form Logic ---
+            btnClear.addEventListener('click', () => {
+                if (confirm('คุณต้องการล้างข้อมูลทั้งหมดใช่หรือไม่?')) {
+                    // ล้างข้อมูลในฟอร์ม
+                    form.reset();
+                    
+                    // ลบข้อมูลที่บันทึกไว้ใน Local Storage
+                    localStorage.removeItem('promptGeneratorDarkData');
+                    
+                    // รีเซ็ตตัวนับอักษร
+                    charCountDisplay.innerHTML = `<i class="fa-solid fa-align-left mr-1"></i> 0 ตัวอักษร`;
+                    
+                    // ซ่อนหน้าต่างผลลัพธ์
+                    resultSection.classList.add('hidden');
+                    resultText.value = '';
+                    
+                    // เลื่อนกลับไปด้านบนและ Focus ช่องแรก
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    setTimeout(() => inputs.systemName.focus(), 300);
+                }
+            });
 
             // --- 4. Generate Prompt Logic ---
             form.addEventListener('submit', (e) => {
